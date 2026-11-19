@@ -86,6 +86,12 @@ namespace Labka_8.Goloveii
             return 0.12 * CalculateArea(diameter) + 40;
         }
 
+        // Умовні дані продажів для таблиці
+        static int GetSold(int row, int col)
+        {
+            return 5 + (row * 3 + col * 2) % 7;
+        }
+
         // ===== Пункт 2: таблиця вартості =====
         // Межі й крок вводить користувач
         static void ShowCostTable()
@@ -108,16 +114,23 @@ namespace Labka_8.Goloveii
         }
 
         // ===== Пункт 3: продажі за днями тижня =====
+        // Вводить дані й викликає виведення
         static void ShowSalesTable()
         {
             string[] pizzas = { "Маргарита", "Пепероні", "Чотири сири", "Гавайська", "Диявола" };
             string[] days = { "Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Нд" };
 
-            if (!TryReadInt($"Кількість рядків (позицій), 1–{pizzas.Length}: ", pizzas.Length, out int rows)) return;
-            if (!TryReadInt($"Кількість стовпців (днів), 1–{days.Length}: ", days.Length, out int cols)) return;
+            int rows = ReadInt($"Кількість рядків (позицій), 1–{pizzas.Length}: ", 1, pizzas.Length);
+            int cols = ReadInt($"Кількість стовпців (днів), 1–{days.Length}: ", 1, days.Length);
+            Console.WriteLine();
+            PrintSalesTable(pizzas, days, rows, cols);
+        }
 
-            int[] colSums = new int[cols];
-            int grand = 0;
+        // Таблиця на два входи з підсумками
+        static void PrintSalesTable(string[] pizzas, string[] days, int rows, int cols)
+        {
+            int[] colSums = new int[cols]; // Підсумки стовпців
+            int grand = 0;                 // Загальний підсумок
 
             Console.Write($"{"",-14}");
             for (int c = 0; c < cols; c++) Console.Write($"{days[c],6}");
@@ -125,11 +138,11 @@ namespace Labka_8.Goloveii
 
             for (int r = 0; r < rows; r++)
             {
-                int rowSum = 0;
+                int rowSum = 0; // Свій для кожного рядка
                 Console.Write($"{pizzas[r],-14}");
                 for (int c = 0; c < cols; c++)
                 {
-                    int sold = 5 + (r * 3 + c * 2) % 7;
+                    int sold = GetSold(r, c);
                     Console.Write($"{sold,6}");
                     rowSum += sold;
                     colSums[c] += sold;
@@ -141,23 +154,6 @@ namespace Labka_8.Goloveii
             Console.Write($"{"Разом",-14}");
             for (int c = 0; c < cols; c++) Console.Write($"{colSums[c],6}");
             Console.WriteLine($"{grand,8}");
-        }
-
-        // Читає число від 1 до max; при помилці виводить повідомлення й повертає false
-        static bool TryReadInt(string prompt, int max, out int value)
-        {
-            Console.Write(prompt);
-            if (!int.TryParse(Console.ReadLine(), out value))
-            {
-                Console.WriteLine("Помилка: потрібне ціле число.");
-                return false;
-            }
-            if (value < 1 || value > max)
-            {
-                Console.WriteLine($"Помилка: число має бути від 1 до {max}.");
-                return false;
-            }
-            return true;
         }
 
         // ===== Безпечне введення =====

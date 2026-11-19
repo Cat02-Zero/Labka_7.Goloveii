@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Text;
 
 namespace Labka_8.Goloveii
@@ -86,9 +87,14 @@ namespace Labka_8.Goloveii
         }
 
         // ===== Пункт 2: таблиця вартості =====
+        // Межі й крок вводить користувач
         static void ShowCostTable()
         {
-            PrintCostTable(20, 45, 2.5);
+            double from = ReadDouble("Початковий діаметр, см (1–100): ", 1, 100);
+            double to = ReadDouble($"Кінцевий діаметр, см ({from}–100): ", from, 100);
+            double step = ReadDouble("Крок, см (0,1–100): ", 0.1, 100);
+            Console.WriteLine();
+            PrintCostTable(from, to, step);
         }
 
         // Табулювання: початок, кінець, крок
@@ -152,6 +158,49 @@ namespace Labka_8.Goloveii
                 return false;
             }
             return true;
+        }
+
+        // ===== Безпечне введення =====
+        // Питає, поки не отримає число в межах [min; max]
+        static double ReadDouble(string prompt, double min, double max)
+        {
+            while (true)
+            {
+                Console.Write(prompt);
+                string text = (Console.ReadLine() ?? "").Trim().Replace(',', '.');
+
+                if (!double.TryParse(text, NumberStyles.Float, CultureInfo.InvariantCulture, out double value))
+                {
+                    Console.WriteLine("Помилка: потрібне число.");
+                    continue;
+                }
+                if (value < min || value > max)
+                {
+                    Console.WriteLine($"Помилка: число має бути від {min} до {max}.");
+                    continue;
+                }
+                return value;
+            }
+        }
+
+        // Те саме для цілих чисел
+        static int ReadInt(string prompt, int min, int max)
+        {
+            while (true)
+            {
+                Console.Write(prompt);
+                if (!int.TryParse(Console.ReadLine(), out int value))
+                {
+                    Console.WriteLine("Помилка: потрібне ціле число.");
+                    continue;
+                }
+                if (value < min || value > max)
+                {
+                    Console.WriteLine($"Помилка: число має бути від {min} до {max}.");
+                    continue;
+                }
+                return value;
+            }
         }
     }
 }

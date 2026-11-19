@@ -26,6 +26,9 @@ namespace Labka_9.Goloveii
                     case "3": ShowSalesTable(); Pause(); break;
                     case "4": AddValue(prices, ref count, ReadDouble("Ціна позиції, грн (0–10000): ", 0, 10000), prices.Length); PrintCount(count); Pause(); break;
                     case "5": PrintValues(prices, count); Pause(); break;
+                    case "6": RemoveAt(prices, ref count, ReadInt("Номер позиції для видалення: ", 1, prices.Length)); Pause(); break;
+                    case "7": ShowStatistics(prices, count); Pause(); break;
+                    case "8": ShowMax(prices, count); Pause(); break;
                     case "0": running = false; ShowGoodbye(); break;
                     default: ShowUnknownChoice(); Pause(); break;
                 }
@@ -41,6 +44,9 @@ namespace Labka_9.Goloveii
             Console.WriteLine("3 — продажі за днями тижня");
             Console.WriteLine("4 — додати ціну позиції");
             Console.WriteLine("5 — показати всі ціни");
+            Console.WriteLine("6 — видалити за номером");
+            Console.WriteLine("7 — статистика");
+            Console.WriteLine("8 — найдорожча позиція");
             Console.WriteLine("0 — вихід");
             Console.Write("Ваш вибір: ");
         }
@@ -75,6 +81,23 @@ namespace Labka_9.Goloveii
             count++;
         }
 
+        // Видаляє елемент за номером (з 1), зсуває решту вліво, зменшує лічильник
+        static void RemoveAt(double[] values, ref int count, int index)
+        {
+            if (index < 1 || index > count)
+            {
+                Console.WriteLine("Немає позиції з таким номером.");
+                return;
+            }
+            for (int i = index - 1; i < count - 1; i++)
+            {
+                values[i] = values[i + 1];
+            }
+            count--;
+            values[count] = 0;
+            Console.WriteLine($"Позицію №{index} видалено.");
+        }
+
         // Таблиця з номерами до count; нічого не питає з клавіатури
         static void PrintValues(double[] values, int count)
         {
@@ -93,6 +116,55 @@ namespace Labka_9.Goloveii
         static void PrintCount(int count)
         {
             Console.WriteLine($"Записів тепер: {count}");
+        }
+
+        // ===== Статистика: два результати через out =====
+        static void Statistics(double[] values, int count, out double sum, out double average)
+        {
+            sum = 0;
+            for (int i = 0; i < count; i++)
+            {
+                sum += values[i];
+            }
+            average = count > 0 ? sum / count : 0;
+        }
+
+        static void ShowStatistics(double[] values, int count)
+        {
+            Statistics(values, count, out double sum, out double average);
+            Console.WriteLine($"Кількість: {count}");
+            Console.WriteLine($"Сума: {sum:F2} грн");
+            Console.WriteLine($"Середня ціна: {average:F2} грн");
+        }
+
+        // Найбільше значення та його номер; порожній набір дає number = 0
+        static void FindMax(double[] values, int count, out double max, out int number)
+        {
+            max = 0;
+            number = 0;
+            if (count == 0) return;
+
+            max = values[0];
+            number = 1;
+            for (int i = 1; i < count; i++)
+            {
+                if (values[i] > max)
+                {
+                    max = values[i];
+                    number = i + 1;
+                }
+            }
+        }
+
+        static void ShowMax(double[] values, int count)
+        {
+            FindMax(values, count, out double max, out int number);
+            if (number == 0)
+            {
+                Console.WriteLine("Немає значень.");
+                return;
+            }
+            Console.WriteLine($"Найбільша ціна: {max:F2} грн (позиція №{number}).");
         }
 
         // ===== Довідка =====

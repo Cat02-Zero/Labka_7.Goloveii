@@ -29,6 +29,7 @@ namespace Labka_9.Goloveii
                     case "6": RemoveAt(prices, ref count, ReadInt("Номер позиції для видалення: ", 1, prices.Length)); Pause(); break;
                     case "7": ShowStatistics(prices, count); Pause(); break;
                     case "8": ShowMax(prices, count); Pause(); break;
+                    case "9": ShowExperiment(); Pause(); break;
                     case "0": running = false; ShowGoodbye(); break;
                     default: ShowUnknownChoice(); Pause(); break;
                 }
@@ -47,6 +48,7 @@ namespace Labka_9.Goloveii
             Console.WriteLine("6 — видалити за номером");
             Console.WriteLine("7 — статистика");
             Console.WriteLine("8 — найдорожча позиція");
+            Console.WriteLine("9 — дослід: значиме й посилальне");
             Console.WriteLine("0 — вихід");
             Console.Write("Ваш вибір: ");
         }
@@ -165,6 +167,37 @@ namespace Labka_9.Goloveii
                 return;
             }
             Console.WriteLine($"Найбільша ціна: {max:F2} грн (позиція №{number}).");
+        }
+
+        // ===== Дослід: значиме й посилальне =====
+        // int без ref: змінюється лише копія
+        static void ChangeInt(int value)
+        {
+            value = value + 100;
+            Console.WriteLine($"  Усередині методу: value = {value}");
+        }
+
+        // Елемент масиву: змінюється той самий масив
+        static void ChangeElement(double[] items)
+        {
+            items[0] = items[0] + 100;
+            Console.WriteLine($"  Усередині методу: items[0] = {items[0]}");
+        }
+
+        static void ShowExperiment()
+        {
+            int price = 50;
+            double[] items = { 50, 70, 90 };
+
+            Console.WriteLine("Значиме (int) без ref:");
+            Console.WriteLine($"  До виклику: price = {price}");
+            ChangeInt(price);
+            Console.WriteLine($"  Після виклику: price = {price}");
+
+            Console.WriteLine("Посилальне (масив):");
+            Console.WriteLine($"  До виклику: items[0] = {items[0]}");
+            ChangeElement(items);
+            Console.WriteLine($"  Після виклику: items[0] = {items[0]}");
         }
 
         // ===== Довідка =====
